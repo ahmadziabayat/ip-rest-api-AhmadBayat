@@ -60,7 +60,7 @@ public class IpAddressWebController {
             System.out.println("cidrBlock: " + cidr);
 
             String emailAddress = cidrBlock.getCreatedByUser().getEmail();
-            boolean createNewIpAddress = ip_address_service.createIpAddress(cidr, emailAddress);
+            boolean createNewIpAddress = ip_address_service.createIpAddress(cidr);
 
             if (!createNewIpAddress) {
                 System.out.println(createNewIpAddress);

@@ -8,6 +8,7 @@ import com.trillion.iprestapi.util.StatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,46 +32,65 @@ public class IPAddressService {
      return this.ip_address_repository.findAll();
     }
 
-    public boolean createIpAddress(String cidr, String email){
-        List<IpAddress> listCount = new ArrayList<>();
-        this.ip_address_repository.findAll().forEach(items ->{
-            if(items.getCidr_Block() == cidr){
-                listCount.add(items);
-            }
-        });
-        if (listCount.size() > 0){
+    public boolean createIpAddress(String cidr){
+        List<IpAddress> existence = ip_address_repository.findOneByCidr(cidr);
+        if(existence.size()>0){
             return true;
         }
 
         List<String> addresses = new ArrayList<>();
-
-        this.ip_address_repository.findAll().forEach(ip_address ->{
-            addresses.add(ip_address.getIp_address());
+        this.ip_address_repository.findAll().forEach(ip ->{
+            addresses.add(ip.getIp_address());
         });
 
-       List<User> userExist = new ArrayList<>();
-      this.userRepository.findAll().forEach(user ->{
-            if (user.getEmail() == email){
-                userExist.add(user);
-            }
-        });
-      User user = null;
+        Optional<User> existanceUser = userRepository.findOneByEmail("ab@gmail.com");
+        User user = null;
+        if(!existanceUser.isPresent()){
+            user = userService.createUser("Ahmad","Asad","aa@gamil.com");
+            System.out.println("Created:" + user.getEmail());
+        }else {
+            user = existanceUser.get();
+            System.out.println("Found User: " + user.getEmail());
+        }
+        for(String ip : addresses){
+            IpAddress ip_address = new IpAddress();
+            ip_address.setCidr_Block(cidr);
+            ip_address.setCreatedByUser(user);
+            ip_address.setIp_address(ip);
+            ip_address.setCurrentStatus(StatusType.AVAILABLE);
+            ip_address_repository.save(ip_address);
+            System.out.println("New IP Added: "+ ip);
 
-      if (userExist.size() == 0){
-          user = this.userService.createUser("testFirstName", "testLast", email);
-          System.out.println("User Created"+ user.getEmail());
-      }else {
-          for(String address : addresses){
-              IpAddress ipAddress = new IpAddress();
-              ipAddress.setCidr_Block(cidr);
-              ipAddress.setCreatedByUser(user);
-              ipAddress.setIp_address(address);
-              ipAddress.setCurrentStatus(StatusType.AVAILABLE);
-              ip_address_repository.save(ipAddress);
-              System.out.println("Created new Ip Address");
-          }
-      }
+        }
         return true;
+    }
+
+    public Boolean acquireIpAddress(String ipAddress) throws Exception{
+        Optional<IpAddress> ip_address = ip_address_repository.findByIpAddress(ipAddress);
+        if(ip_address.isPresent()){
+            IpAddress address = ip_address.get();
+            Optional<User> user = userRepository.findOneByEmail("ab@gmail.com");
+            address.setUpdatedByUser(user.get());
+            address.setCurrentStatus(StatusType.ACQUIRED);
+            ip_address_repository.save(address);
+            return true;
+        }else {
+            throw new Exception();
+        }
+    }
+
+    public Boolean releaseIpAddress(String ipAddress) throws Exception{
+        Optional<IpAddress> ip_address = ip_address_repository.findByIpAddress(ipAddress);
+        if(ip_address.isPresent()){
+            IpAddress address = ip_address.get();
+            Optional<User> user = userRepository.findOneByEmail("ab@gmail.com");
+            address.setUpdatedByUser(user.get());
+            address.setCurrentStatus(StatusType.AVAILABLE);
+            ip_address_repository.save(address);
+            return true;
+        }else{
+            throw new Exception();
+        }
     }
 
 }

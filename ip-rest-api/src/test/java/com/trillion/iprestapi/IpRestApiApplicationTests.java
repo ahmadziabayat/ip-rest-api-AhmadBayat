@@ -49,15 +49,7 @@ public class IpRestApiApplicationTests {
 		ipAddress.setIp_address("");
 		ipAddress.setCurrentStatus(StatusType.AVAILABLE);
 
-		User user = new User();
-
-		user.setFirstName("Ahmad");
-		user.setLastName("Bayat");
-		user.setEmail("ahmad.bayatTest@gmail.com");
-
-		ipAddress.setCreatedByUser(user);
-
-		ObjectMapper mapper = new ObjectMapper();
+   	    ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 		String requestJson = ow.writeValueAsString(ipAddress);
