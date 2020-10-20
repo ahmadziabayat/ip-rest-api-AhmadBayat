@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -25,7 +26,7 @@ public class IpAddressWebController {
     private final IP_Address_Repository ip_address_repository;
     private final UserRepository userRepository;
 
-    private Logger logger =  LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public IpAddressWebController(IPAddressService ip_address_service, IP_Address_Repository ip_address_repository, UserRepository userRepository) {
@@ -35,53 +36,43 @@ public class IpAddressWebController {
     }
 
 
-
-    @RequestMapping(value="/getAllIpAddress", method = RequestMethod.GET)
-    public ResponseEntity<List<IpAddress>> getAllIpAddress(){
+    @RequestMapping(value = "/getAllIpAddress", method = RequestMethod.GET)
+    public ResponseEntity<List<IpAddress>> getAllIpAddress() {
         Iterable<IpAddress> ipList = this.ip_address_repository.findAll();
         List<IpAddress> IpAddressList = new ArrayList<>();
         try {
-            ipList.forEach(item->{
+            ipList.forEach(item -> {
                 IpAddressList.add(item);
             });
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-       return new ResponseEntity<>(IpAddressList, HttpStatus.OK);
+        return new ResponseEntity<>(IpAddressList, HttpStatus.OK);
     }
 
-    /*@RequestMapping(value="/create", method = RequestMethod.POST, consumes = {"application/json"}, produces = {"application/json"})
-    public ResponseEntity<?> createIpAddresses(@RequestBody IpAddress cidrBlock){
-        try{
+    @RequestMapping(value = "/create", method = RequestMethod.POST, consumes = {"application/json"}, produces = {"application/json"})
+    public ResponseEntity<?> createIpAddresses(@RequestBody IpAddress cidrBlock) {
+        try {
             System.out.println(cidrBlock);
             String cidr = cidrBlock.getCidr_Block();
-            System.out.println("cidrBlock: "+ cidr);
+            System.out.println("cidrBlock: " + cidr);
 
             String emailAddress = cidrBlock.getCreatedByUser().getEmail();
             boolean createNewIpAddress = ip_address_service.createIpAddress(cidr, emailAddress);
 
-            if(!createNewIpAddress){
+            if (!createNewIpAddress) {
                 System.out.println(createNewIpAddress);
-                System.out.println("email Address: "+ emailAddress);
-                return new ResponseEntity<>(getJson("Error creating ip address"), HttpStatus.INTERNAL_SERVER_ERROR);
+                System.out.println("email Address: " + emailAddress);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            return new ResponseEntity<>(getJson("success"),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(getJson("success"), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    static String getJson(String result) {
-
-        JsonObject object = new JsonObject();
-        object.addProperty("result", result);
-        return new Gson().toJson(object);
-    }*/
-
-
 
 }

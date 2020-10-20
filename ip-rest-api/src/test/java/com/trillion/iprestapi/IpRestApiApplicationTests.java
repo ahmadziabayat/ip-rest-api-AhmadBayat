@@ -1,6 +1,8 @@
 package com.trillion.iprestapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.trillion.iprestapi.business.service.IPAddressService;
 import com.trillion.iprestapi.data.entity.IpAddress;
 import com.trillion.iprestapi.data.entity.User;
@@ -8,18 +10,17 @@ import com.trillion.iprestapi.data.repository.IP_Address_Repository;
 import com.trillion.iprestapi.data.repository.UserRepository;
 import com.trillion.iprestapi.util.StatusType;
 import com.trillion.iprestapi.web.IpAddressWebController;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 
 @RunWith(SpringRunner.class)
@@ -56,23 +57,17 @@ public class IpRestApiApplicationTests {
 
 		ipAddress.setCreatedByUser(user);
 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+		String requestJson = ow.writeValueAsString(ipAddress);
 
-		// execute
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(URL + "/create").contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaType.APPLICATION_JSON_UTF8).content(objectToJson(ipAddress))).andReturn();
-
-		// verify
-		int status = result.getResponse().getStatus();
-		Assert.assertEquals("success", HttpStatus.OK.value(), status);
-
-
+		mockMvc.perform(post(URL + "/create")
+				.contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8)
+				.content(requestJson))
+				.andExpect(status().is5xxServerError());
 
 	}
-
-	/*public static <T> T jsonToObject(String json, Class<T> classOf){
-		Gson gs = new Gson();
-		return gs.fromJson(json,classOf);
-	}*/
 
 	public static String objectToJson(Object obj) throws Exception{
 		ObjectMapper mapper = new ObjectMapper();
