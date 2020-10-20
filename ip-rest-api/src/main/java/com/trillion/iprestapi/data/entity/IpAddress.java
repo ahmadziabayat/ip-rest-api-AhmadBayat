@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Table(name="IP_ADDRESS")
 public class IpAddress implements Serializable {
 
-    private static final long SerialVersionUID = 1L;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,20 +47,12 @@ public class IpAddress implements Serializable {
         this.ip_address_Id = ip_address_Id;
     }
 
-    public String getIpAddress() {
+    public String getIp_address() {
         return ip_address;
     }
 
-    public void set_IP_Address(String ip_address) {
+    public void setIp_address(String ip_address) {
         this.ip_address = ip_address;
-    }
-
-    public StatusType getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public void setCurrentStatus(StatusType currentStatus) {
-        this.currentStatus = currentStatus;
     }
 
     public String getCidr_Block() {
@@ -71,12 +63,12 @@ public class IpAddress implements Serializable {
         this.cidr_Block = cidr_Block;
     }
 
-    public String getIp_address() {
-        return ip_address;
+    public StatusType getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setIp_address(String ip_address) {
-        this.ip_address = ip_address;
+    public void setCurrentStatus(StatusType currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
     public User getCreatedByUser() {
@@ -98,8 +90,11 @@ public class IpAddress implements Serializable {
     @Override
     public String toString() {
         return "IpAddress{" +
-                "ip_address_Id=" + ip_address_Id +
                 ", ip_address='" + ip_address + '\'' +
+                ", cidr_Block='" + cidr_Block + '\'' +
+                ", currentStatus=" + currentStatus +
+                ", createdByUser=" + createdByUser +
+                ", updatedByUser=" + updatedByUser +
                 '}';
     }
 }

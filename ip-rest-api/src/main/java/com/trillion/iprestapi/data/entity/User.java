@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="USER")
 public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
+
 
     @Id
     @Column(name="USER_ID")
@@ -37,6 +37,14 @@ public class User implements Serializable {
     private Set<IpAddress> updated_User_id;
 
     public User() {
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -79,12 +87,12 @@ public class User implements Serializable {
         this.updated_User_id = updated_User_id;
     }
 
-    public long getUserId() {
-
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    @Override
+    public String toString() {
+        return "User{" +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

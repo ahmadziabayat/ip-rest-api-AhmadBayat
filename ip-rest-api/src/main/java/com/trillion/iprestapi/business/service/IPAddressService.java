@@ -44,8 +44,8 @@ public class IPAddressService {
 
         List<String> addresses = new ArrayList<>();
 
-        this.userRepository.findAll().forEach(emailItem ->{
-            addresses.add(emailItem.getEmail());
+        this.ip_address_repository.findAll().forEach(ip_address ->{
+            addresses.add(ip_address.getIp_address());
         });
 
        List<User> userExist = new ArrayList<>();
@@ -64,7 +64,7 @@ public class IPAddressService {
               IpAddress ipAddress = new IpAddress();
               ipAddress.setCidr_Block(cidr);
               ipAddress.setCreatedByUser(user);
-              ipAddress.set_IP_Address(address);
+              ipAddress.setIp_address(address);
               ipAddress.setCurrentStatus(StatusType.AVAILABLE);
               ip_address_repository.save(ipAddress);
               System.out.println("Created new Ip Address");

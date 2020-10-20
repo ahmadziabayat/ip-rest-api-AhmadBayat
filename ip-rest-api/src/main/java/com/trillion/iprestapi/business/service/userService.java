@@ -1,5 +1,6 @@
 package com.trillion.iprestapi.business.service;
 
+import com.trillion.iprestapi.data.entity.IpAddress;
 import com.trillion.iprestapi.data.entity.User;
 import com.trillion.iprestapi.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,10 @@ public class userService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public userService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User createUser(String firstName, String lastName, String emailAddress){
         List<User> existenceUser = new ArrayList<>();
