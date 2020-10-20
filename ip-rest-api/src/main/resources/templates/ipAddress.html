@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="eg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>IP Address</title>
+</head>
+<body>
+    <h1>Weclome to Ip address page</h1>
+    <table>
+        <tr>
+            <th> Ip Address</th>
+            <th>Current Status</th>
+            <th>Created by User</th>
+        </tr>
+        <tr th:each="IpAddressList: ${IpAddressList}">
+            <td th:text="${IpAddressList.ipAddress}"></td>
+        </tr>
+    </table>
+</body>
+</html>
